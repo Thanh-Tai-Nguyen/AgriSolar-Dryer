@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ Sơ Dự Án AgriTech - Trạm Sấy Nông Sản Di Động Thông Minh</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: { 50: '#ecfdf5', 100: '#d1fae5', 500: '#10b981', 600: '#059669', 700: '#047857', 800: '#065f46', 900: '#064e3b' },
+                        amber: { 500: '#f59e0b', 600: '#d97706' },
+                        slate: { 800: '#1e293b', 900: '#0f172a' }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .blueprint-grid {
+            background-image: linear-gradient(to right, rgba(16, 185, 129, 0.1) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(16, 185, 129, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased flex flex-col min-h-screen">
+
+    <!-- Top Sticky Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-slate-900/95 backdrop-blur border-b border-emerald-500/30 text-white shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-600 to-amber-500 flex items-center justify-center shadow-lg shadow-emerald-900/50">
+                    <i class="fa-solid fa-seedling text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg sm:text-xl tracking-tight bg-gradient-to-r from-emerald-400 to-amber-400 bg-clip-text text-transparent">AgriSolar-Dryer</h1>
+                    <p class="text-xs text-slate-400">Cuộc thi Khởi nghiệp HSSV TP.HCM 2026 - 2027</p>
+                </div>
+            </div>
+            
+            <!-- Desktop Nav Links -->
+            <nav class="hidden lg:flex items-center space-x-1 text-sm font-medium">
+                <button onclick="switchTab('tab-cover')" class="nav-btn px-3 py-2 rounded-lg transition text-emerald-400 bg-emerald-900/40 border border-emerald-500/30" data-target="tab-cover"><i class="fa-solid fa-house mr-1.5"></i> Bìa & Tóm Tắt</button>
+                <button onclick="switchTab('tab-simulator')" class="nav-btn px-3 py-2 rounded-lg transition text-slate-300 hover:text-white hover:bg-slate-800" data-target="tab-simulator"><i class="fa-solid fa-microchip mr-1.5"></i> Mô Phỏng & Ứng Dụng</button>
+                <button onclick="switchTab('tab-bmc')" class="nav-btn px-3 py-2 rounded-lg transition text-slate-300 hover:text-white hover:bg-slate-800" data-target="tab-bmc"><i class="fa-solid fa-chess-board mr-1.5"></i> Business Model</button>
+                <button onclick="switchTab('tab-analysis')" class="nav-btn px-3 py-2 rounded-lg transition text-slate-300 hover:text-white hover:bg-slate-800" data-target="tab-analysis"><i class="fa-solid fa-chart-line mr-1.5"></i> Tài Chính & Tiêu Chí</button>
+                <button onclick="switchTab('tab-impact')" class="nav-btn px-3 py-2 rounded-lg transition text-slate-300 hover:text-white hover:bg-slate-800" data-target="tab-impact"><i class="fa-solid fa-earth-americas mr-1.5"></i> Tác Động & SHTT</button>
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <div class="lg:hidden">
+                <button id="mobile-menu-btn" class="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white focus:outline-none">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-4 space-y-1">
+            <button onclick="switchTab('tab-cover'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-emerald-400 bg-slate-800"><i class="fa-solid fa-house mr-2"></i> Bìa & Tóm Tắt</button>
+            <button onclick="switchTab('tab-simulator'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800"><i class="fa-solid fa-microchip mr-2"></i> Mô Phỏng & Ứng Dụng</button>
+            <button onclick="switchTab('tab-bmc'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800"><i class="fa-solid fa-chess-board mr-2"></i> Business Model</button>
+            <button onclick="switchTab('tab-analysis'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800"><i class="fa-solid fa-chart-line mr-2"></i> Tài Chính & Tiêu Chí</button>
+            <button onclick="switchTab('tab-impact'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800"><i class="fa-solid fa-earth-americas mr-2"></i> Tác Động & SHTT</button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- ================= TAB 1: BÌA & THÔNG TIN ĐỘI THI ================= -->
+        <section id="tab-cover" class="tab-content space-y-8">
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 text-white shadow-2xl border border-emerald-500/20 p-8 sm:p-12">
+                <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -left-20 -top-20 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="relative z-10 max-w-4xl space-y-6">
+                    <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs sm:text-sm font-semibold tracking-wide">
+                        <i class="fa-solid fa-award"></i>
+                        <span>Phụ Lục II - Hồ Sơ Đăng Ký Dự Án Khởi Nghiệp Cấp Thành Phố (2026 - 2027)</span>
+                    </div>
+                    
+                    <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                        Trạm Sấy Nông Sản Di Động Thông Minh Ứng Dụng <span class="bg-gradient-to-r from-emerald-400 to-amber-400 bg-clip-text text-transparent">Năng Lượng Lai Tối Giản</span>
+                    </h2>
+                    
+                    <p class="text-lg sm:text-xl text-slate-300 font-light leading-relaxed">
+                        <strong class="text-emerald-400 font-semibold">Tên tiếng Anh:</strong> Smart Modular Solar-Biomass Agricultural Dryer (AgriSolar-Dryer)
+                    </p>
+
+                    <div class="pt-4 flex flex-wrap gap-4">
+                        <a href="#summary-details" onclick="switchTab('tab-simulator')" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold shadow-lg shadow-emerald-600/30 transition flex items-center space-x-2">
+                            <span>Khám Phá Mô Phỏng & Ứng Dụng Sấy Nhiệt</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                        <a href="#team-info" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold transition flex items-center space-x-2">
+                            <span>Xem Thông Tin Đội Thi</span>
+                            <i class="fa-solid fa-users"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Executive Summary -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-fire-flame-curved"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-lg">Sấy Đối Lưu Đa Năng</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Phương pháp sơ chế nhiệt đối lưu khí nóng hàng đầu, xử lý linh hoạt mọi nhóm nông sản từ ngũ cốc, hạt có dầu, rau củ gia vị đến trái cây mà không làm biến đổi cấu trúc sâu.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-lg">Kiến Trúc Lai 3 Tầng</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Kết hợp Nhiệt mặt trời, Điện mặt trời tối ưu quạt/IoT (giảm 60% pin lưu trữ), và Lò đốt sinh khối gián tiếp qua ống chùm tách biệt hoàn toàn khói thải, hoạt động 24/7 mùa mưa.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-lg">Hiệu Quả Kinh Tế & ESG</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Mô hình dịch vụ D-a-S và cho thuê trọn gói mùa vụ giúp HTX không tốn CapEx đầu tư ban đầu, hoàn vốn nhanh trong vòng 10 – 14 tháng.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Team & Institution Info Card -->
+            <div id="team-info" class="bg-white rounded-3xl p-8 shadow-sm border border-slate-200/80 space-y-6">
+                <div class="border-b border-slate-100 pb-4 flex items-center justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900"><i class="fa-solid fa-id-card text-emerald-600 mr-2"></i> Thông Tin Đơn Vị & Đội Thi</h3>
+                        <p class="text-slate-500 text-sm">Hồ sơ chính thức tham gia cuộc thi Khởi nghiệp cấp Thành phố</p>
+                    </div>
+                    <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">Đã xác thực</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <span class="w-32 font-semibold text-slate-500">Đơn vị dự thi:</span>
+                            <span class="text-slate-900 font-bold">Trường THCS và THPT Đinh Thiện Lý (TP. Hồ Chí Minh)</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <span class="w-32 font-semibold text-slate-500">Lĩnh vực:</span>
+                            <span class="text-slate-900 font-semibold">Công nghệ Nông nghiệp / Năng lượng Tái tạo & Phát triển Bền vững</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <span class="w-32 font-semibold text-slate-500">Trưởng nhóm:</span>
+                            <span class="text-slate-900 font-semibold">Nguyễn Thiên Phúc (Lớp 10 - Đơn vị 10L2)</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <span class="w-32 font-semibold text-slate-500">Thành viên khác:</span>
+                            <span class="text-slate-900">04 Thành viên tiêu biểu (Ban kỹ thuật cơ khí, lập trình IoT và tài chính khởi nghiệp)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4 bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                        <div class="flex items-start space-x-3">
+                            <span class="w-36 font-semibold text-slate-500">Giáo viên hướng dẫn:</span>
+                            <span class="text-slate-900 font-bold">ThS. Chuyên môn Công nghệ & Khoa học Ứng dụng</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <span class="w-36 font-semibold text-slate-500">Mã hồ sơ dự thi:</span>
+                            <span class="text-emerald-700 font-mono font-bold">AGRI-2026-HTS-10L2</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <span class="w-36 font-semibold text-slate-500">Liên hệ hỗ trợ:</span>
+                            <span class="text-slate-900">agrisolar.dtl@gmail.com | Hotline: 090x.xxx.xxx</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 2: MÔ PHỎNG & ỨNG DỤNG SẤY NHIỆT ================= -->
+        <section id="tab-simulator" class="tab-content hidden space-y-8">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                    <div>
+                        <h3 class="text-2xl font-bold text-slate-900"><i class="fa-solid fa-microchip text-emerald-600 mr-2"></i> Bộ Mô Phỏng Trực Quan & Tùy Biến Ứng Dụng Sấy Nhiệt</h3>
+                        <p class="text-slate-500 text-sm">Trải nghiệm vận hành thời gian thực theo từng nhóm nông sản và chế độ khí hậu của trạm sấy.</p>
+                    </div>
+                    
+                    <!-- Control Buttons -->
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="setMode('day')" id="btn-day" class="sim-mode-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white shadow-md">
+                            <i class="fa-solid fa-sun mr-1"></i> Ban Ngày (Nắng Tốt)
+                        </button>
+                        <button onclick="setMode('cloud')" id="btn-cloud" class="sim-mode-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
+                            <i class="fa-solid fa-cloud-sun mr-1"></i> Giao Thời (Mây Mù)
+                        </button>
+                        <button onclick="setMode('night')" id="btn-night" class="sim-mode-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
+                            <i class="fa-solid fa-moon mr-1"></i> Đêm / Mưa 100%
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simulator Viewport -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Graphic Animation Area -->
+                    <div class="lg:col-span-2 bg-slate-900 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between text-white min-h-[380px] border border-slate-800">
+                        <div class="absolute inset-0 blueprint-grid opacity-20 pointer-events-none"></div>
+                        
+                        <div class="relative z-10 flex justify-between items-center">
+                            <span id="sim-status-badge" class="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold">
+                                Trạng Thái: Đang vận hành nhiệt mặt trời + PV
+                            </span>
+                            <span class="text-xs font-mono text-slate-400">IoT EMS v2.4 Active</span>
+                        </div>
+
+                        <!-- Central Animated Schematic Diagram -->
+                        <div class="relative z-10 my-6 flex flex-col items-center justify-center space-y-4">
+                            <div class="w-full grid grid-cols-3 gap-4 text-center">
+                                <div id="layer-solar" class="p-3 rounded-xl bg-slate-800/80 border border-amber-500/40 transition">
+                                    <i class="fa-solid fa-solar-panel text-amber-400 text-2xl mb-1"></i>
+                                    <div class="text-xs font-bold">1. Mái Thu Nhiệt</div>
+                                    <div id="val-solar-temp" class="text-[11px] text-amber-300 mt-1">Nhiệt khí: +45°C</div>
+                                </div>
+                                <div id="layer-pv" class="p-3 rounded-xl bg-slate-800/80 border border-emerald-500/40 transition">
+                                    <i class="fa-solid fa-battery-full text-emerald-400 text-2xl mb-1"></i>
+                                    <div class="text-xs font-bold">2. Pin PV + Quạt IoT</div>
+                                    <div id="val-pv-power" class="text-[11px] text-emerald-300 mt-1">Công suất: 3 kWp</div>
+                                </div>
+                                <div id="layer-biomass" class="p-3 rounded-xl bg-slate-800/80 border border-slate-600 transition">
+                                    <i class="fa-solid fa-fire text-slate-400 text-2xl mb-1" id="biomass-icon"></i>
+                                    <div class="text-xs font-bold">3. Lò Sinh Khối Gián Tiếp</div>
+                                    <div id="val-biomass-status" class="text-[11px] text-slate-400 mt-1">Trạng thái: Chờ</div>
+                                </div>
+                            </div>
+
+                            <div class="w-full bg-slate-800/60 rounded-xl p-3 border border-slate-700 flex items-center justify-between text-xs">
+                                <span class="text-slate-400"><i class="fa-solid fa-wind mr-1 text-cyan-400"></i> Buồng Sấy Đối Lưu:</span>
+                                <span id="val-drying-room" class="font-bold text-emerald-400">Nhiệt độ: 55°C | Độ ẩm chuẩn bảo quản: < 12-14%</span>
+                            </div>
+                        </div>
+
+                        <div class="relative z-10 grid grid-cols-3 gap-2 text-center text-xs border-t border-slate-800 pt-4">
+                            <div>
+                                <span class="text-slate-400 block">Tiết kiệm Pin</span>
+                                <span class="font-bold text-white text-sm" id="metric-battery-saving">+60%</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block">Tách khói độc</span>
+                                <span class="font-bold text-emerald-400 text-sm">100% Ống chùm</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block">Chống sốc nhiệt</span>
+                                <span class="font-bold text-amber-400 text-sm">Thuật toán EMS</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Simulator Parameter Readings & Product Selector -->
+                    <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 flex flex-col justify-between space-y-4">
+                        <div>
+                            <h4 class="font-bold text-slate-900 text-base mb-2"><i class="fa-solid fa-sliders text-emerald-600 mr-1.5"></i> Chọn Nhóm Nguyên Liệu Sấy</h4>
+                            <p class="text-xs text-slate-600 mb-3">Linh hoạt điều chỉnh dải nhiệt độ & thời gian gió thổi trên cùng một hệ thống máy sấy:</p>
+                            
+                            <select id="crop-selector" onchange="updateCropParameters()" class="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-emerald-500 mb-4">
+                                <option value="cereal">Nhóm Ngũ Cốc & Đậu (Thóc, Ngô, Đậu nành...)</option>
+                                <option value="nut">Nhóm Hạt Có Dầu & Vỏ Cứng (Điều, Mắc-ca, Cà phê...)</option>
+                                <option value="spice">Nhóm Rau Củ & Gia Vị (Ớt, Tiêu, Gừng, Nghệ...)</option>
+                                <option value="fruit">Nhóm Trái Cây (Chuối, Xoài, Nhãn, Mít...)</option>
+                            </select>
+
+                            <div class="space-y-2.5 text-xs">
+                                <div class="flex justify-between items-center p-2 bg-white rounded-xl border border-slate-200">
+                                    <span class="text-slate-600">Nhiệt độ sấy khuyến nghị:</span>
+                                    <span id="crop-temp" class="font-bold text-emerald-700">45°C - 55°C</span>
+                                </div>
+                                <div class="flex justify-between items-center p-2 bg-white rounded-xl border border-slate-200">
+                                    <span class="text-slate-600">Độ ẩm mục tiêu an toàn:</span>
+                                    <span id="crop-humidity-target" class="font-bold text-slate-900">12% - 14%</span>
+                                </div>
+                                <div class="flex justify-between items-center p-2 bg-white rounded-xl border border-slate-200">
+                                    <span class="text-slate-600">Đặc tính kỹ thuật:</span>
+                                    <span id="crop-note" class="font-bold text-slate-700">Chống nấm mốc, giữ nguyên hạt</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-[11px] text-emerald-900">
+                            <i class="fa-solid fa-circle-info mr-1 text-emerald-600"></i>
+                            Sấy đối lưu khí nóng giúp bay hơi nước từ từ, giữ nguyên cấu trúc tự nhiên và sẵn sàng cho các bước xay bột, ép dầu hoặc đóng gói xuất khẩu.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deep Dive: 4 Groups of Materials Applied -->
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 space-y-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <h3 class="text-xl font-bold text-slate-900"><i class="fa-solid fa-list-check text-emerald-600 mr-2"></i> Chi Tiết Tính Ứng Dụng Rộng Rãi Của Phương Pháp Sấy Nhiệt</h3>
+                    <p class="text-slate-500 text-sm">Khả năng xử lý đa dạng từ hạt ngũ cốc đến rau củ, gia vị và trái cây tươi</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-2">
+                        <div class="font-bold text-emerald-700 text-sm flex items-center">
+                            <i class="fa-solid fa-wheat-awn mr-1.5"></i> 1. Ngũ Cốc & Họ Đậu
+                        </div>
+                        <p class="text-slate-600 leading-relaxed">
+                            Thóc (lúa), ngô (bắp) hạt, đậu nành, đậu xanh, đậu đen, đậu đỏ, mè (vừng). Hạ ẩm chuẩn để bảo quản dài hạn chống mốc.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-2">
+                        <div class="font-bold text-amber-700 text-sm flex items-center">
+                            <i class="fa-solid fa-seedling mr-1.5"></i> 2. Hạt Dầu & Vỏ Cứng
+                        </div>
+                        <p class="text-slate-600 leading-relaxed">
+                            Hạt điều, mắc-ca, óc chó, hạnh nhân, đậu phộng, hạt cà phê, hạt ca cao. Giữ hương vị tự nhiên, không bị biến đổi sâu cấu trúc hạt.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-2">
+                        <div class="font-bold text-cyan-700 text-sm flex items-center">
+                            <i class="fa-solid fa-pepper-hot mr-1.5"></i> 3. Rau Củ & Gia Vị
+                        </div>
+                        <p class="text-slate-600 leading-relaxed">
+                            Sắn lát, khoai lang, hành, tỏi, ớt, tiêu, nghệ, gừng, quế, hồi, thảo mộc & trà. Linh hoạt dải nhiệt độ chống bay hương thơm.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-2">
+                        <div class="font-bold text-rose-700 text-sm flex items-center">
+                            <i class="fa-solid fa-apple-whole mr-1.5"></i> 4. Nhóm Trái Cây
+                        </div>
+                        <p class="text-slate-600 leading-relaxed">
+                            Chuối, mít, xoài, nhãn, vải, nho, hồng. Giữ màu sắc tự nhiên, sấy đối lưu khí nóng giúp nước thoát đều, sẵn sàng đóng gói.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical Blueprint / Sketch Section -->
+            <div class="bg-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl border border-emerald-500/30 space-y-6">
+                <div class="border-b border-slate-800 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-2xl font-bold tracking-tight bg-gradient-to-r from-emerald-400 to-amber-400 bg-clip-text text-transparent">
+                            <i class="fa-solid fa-pen-ruler mr-2"></i> Bản Vẽ Kỹ Thuật & Cấu Trúc Khung Module 20ft
+                        </h3>
+                        <p class="text-slate-400 text-sm">Sơ đồ kỹ thuật chi tiết cấu tạo cơ khí - nhiệt lai của Trạm sấy</p>
+                    </div>
+                    <span class="px-3 py-1 bg-emerald-900/60 border border-emerald-500/40 text-emerald-300 text-xs font-mono rounded-lg">Blueprint Standard ISO-Agri 2026</span>
+                </div>
+
+                <div class="w-full bg-slate-950 rounded-2xl p-6 border border-slate-800 blueprint-grid overflow-x-auto">
+                    <svg viewBox="0 0 900 350" class="w-full min-w-[750px] h-auto">
+                        <rect x="50" y="100" width="800" height="180" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2" />
+                        <circle cx="180" cy="285" r="22" fill="#0f172a" stroke="#64748b" stroke-width="6"/>
+                        <circle cx="720" cy="285" r="22" fill="#0f172a" stroke="#64748b" stroke-width="6"/>
+                        <polygon points="100,100 350,50 550,100" fill="#065f46" stroke="#34d399" stroke-width="2"/>
+                        <text x="250" y="80" fill="#a7f3d0" font-size="12" font-family="sans-serif" font-weight="bold" text-anchor="middle">1. Mái Thu Nhiệt Mặt Trời</text>
+                        <rect x="380" y="65" width="120" height="25" rx="4" fill="#1e3a8a" stroke="#60a5fa" stroke-width="1.5"/>
+                        <text x="440" y="81" fill="#93c5fd" font-size="10" font-family="sans-serif" text-anchor="middle">Tấm PV + Pin LiFePO4</text>
+                        <rect x="80" y="130" width="40" height="60" rx="4" fill="#0f172a" stroke="#f59e0b" stroke-width="2"/>
+                        <text x="100" y="165" fill="#fcd34d" font-size="9" font-family="sans-serif" text-anchor="middle">Tủ IP65</text>
+                        <rect x="150" y="120" width="350" height="140" fill="#334155" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4"/>
+                        <line x1="180" y1="150" x2="470" y2="150" stroke="#cbd5e1" stroke-width="2"/>
+                        <line x1="180" y1="180" x2="470" y2="180" stroke="#cbd5e1" stroke-width="2"/>
+                        <line x1="180" y1="210" x2="470" y2="210" stroke="#cbd5e1" stroke-width="2"/>
+                        <text x="315" y="195" fill="#e2e8f0" font-size="12" font-family="sans-serif" font-weight="bold" text-anchor="middle">Khoang Khay Sấy Đối Lưu (3-5 Tấn)</text>
+                        <rect x="540" y="130" width="130" height="120" rx="6" fill="#78350f" stroke="#f59e0b" stroke-width="2"/>
+                        <text x="605" y="185" fill="#fde68a" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="middle">Lò Sinh Khối</text>
+                        <path d="M 700 130 L 730 130 L 745 220 L 685 220 Z" fill="#475569" stroke="#38bdf8" stroke-width="1.5"/>
+                        <text x="715" y="180" fill="#e0f2fe" font-size="10" font-family="sans-serif" text-anchor="middle">Lọc Xyclon & Ống Chùm</text>
+                        <text x="70" y="325" fill="#10b981" font-size="11" font-family="sans-serif">* Khung gầm rơ-moóc kéo di động - Dễ dàng chuyển dịch tới từng vùng nguyên liệu nông sản thu hoạch vụ mùa.</text>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 3: BUSINESS MODEL CANVAS ================= -->
+        <section id="tab-bmc" class="tab-content hidden space-y-8">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 space-y-6">
+                <div class="border-b border-slate-100 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-2xl font-bold text-slate-900"><i class="fa-solid fa-chess-board text-emerald-600 mr-2"></i> Business Model Canvas (BMC)</h3>
+                        <p class="text-slate-500 text-sm">Mô hình kinh doanh tinh gọn 9 ô bám sát Phụ lục II - Mục III.A</p>
+                    </div>
+                    <span class="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">Chuẩn Khởi Nghiệp Cấp Thành Phố</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 text-sm">
+                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-2 md:col-span-1">
+                        <div class="flex items-center space-x-2 text-emerald-700 font-bold border-b border-slate-200 pb-2">
+                            <i class="fa-solid fa-handshake"></i>
+                            <span>1. Đối Tác Chính</span>
+                        </div>
+                        <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+                            <li>Xưởng cơ khí chế tạo container.</li>
+                            <li>Nhà cung cấp cảm biến IoT & Solar.</li>
+                            <li>Hội Nông dân, Liên minh Hợp tác xã TP.HCM & các tỉnh.</li>
+                            <li>Đơn vị vận tải logistics rơ-moóc.</li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-4 md:col-span-1">
+                        <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-2">
+                            <div class="flex items-center space-x-2 text-emerald-700 font-bold border-b border-slate-200 pb-2">
+                                <i class="fa-solid fa-gears"></i>
+                                <span>2. Hoạt Động Chính</span>
+                            </div>
+                            <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+                                <li>R&D tối ưu trao đổi nhiệt ống chùm.</li>
+                                <li>Lắp ráp module trạm sấy.</li>
+                                <li>Vận hành dịch vụ sấy lưu động.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-2">
+                            <div class="flex items-center space-x-2 text-emerald-700 font-bold border-b border-slate-200 pb-2">
+                                <i class="fa-solid fa-database"></i>
+                                <span>3. Tài Nguyên Chính</span>
+                            </div>
+                            <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+                                <li>Bản quyền thiết kế cơ khí - nhiệt lai.</li>
+                                <li>Thuật toán EMS dự báo bức xạ.</li>
+                                <li>Đội ngũ kỹ thuật cơ - điện tử.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-emerald-50/80 rounded-2xl p-5 border border-emerald-200 space-y-2 md:col-span-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center space-x-2 text-emerald-800 font-bold border-b border-emerald-200 pb-2">
+                                <i class="fa-solid fa-gem"></i>
+                                <span>4. Giá Trị Cốt Lõi</span>
+                            </div>
+                            <ul class="text-xs text-emerald-900 space-y-2 list-disc pl-4 mt-2">
+                                <li><strong>Sấy 24/7 tại chỗ:</strong> Xử lý mọi nông sản hạt, củ, quả, giảm 10-20% hao hụt.</li>
+                                <li><strong>Tối ưu năng lượng:</strong> Giảm 60% pin lưu trữ.</li>
+                                <li><strong>Tiêu chuẩn ESG:</strong> Tách khói sạch 100%.</li>
+                                <li><strong>Không tốn CapEx:</strong> Thuê trọn gói hoặc trả phí theo tấn.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 md:col-span-1">
+                        <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-2">
+                            <div class="flex items-center space-x-2 text-emerald-700 font-bold border-b border-slate-200 pb-2">
+                                <i class="fa-solid fa-heart"></i>
+                                <span>5. Quan Hệ Khách Hàng</span>
+                            </div>
+                            <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+                                <li>Hợp đồng dịch vụ mùa vụ linh hoạt.</li>
+                                <li>Giám sát thông số qua App IoT.</li>
+                                <li>Hỗ trợ kỹ thuật 24/7 tận nơi.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-2">
+                            <div class="flex items-center space-x-2 text-emerald-700 font-bold border-b border-slate-200 pb-2">
+                                <i class="fa-solid fa-bullhorn"></i>
+                                <span>6. Kênh Phân Phối</span>
+                            </div>
+                            <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+                                <li>Tiếp cận trực tiếp HTX, đại lý xã.</li>
+                                <li>Hội thảo trình diễn thực địa.</li>
+                                <li>Nền tảng số AgriTech.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-2 md:col-span-1">
+                        <div class="flex items-center space-x-2 text-emerald-700 font-bold border-b border-slate-200 pb-2">
+                            <i class="fa-solid fa-users"></i>
+                            <span>7. Phân Khúc Khách Hàng</span>
+                        </div>
+                        <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+                            <li>HTX nông nghiệp lúa gạo, cà phê, tiêu, trái cây.</li>
+                            <li>Thương lái & đại lý thu mua quy mô vừa và lớn.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-2">
+                        <div class="flex items-center space-x-2 text-amber-700 font-bold border-b border-slate-200 pb-2">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                            <span>8. Cơ Cấu Chi Phí (Cost Structure)</span>
+                        </div>
+                        <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+                            <li>Chi phí chế tạo module phần cứng CapEx (~180 triệu VNĐ/trạm).</li>
+                            <li>Chi phí vận chuyển lưu động và nhân công vận hành.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-2">
+                        <div class="flex items-center space-x-2 text-emerald-700 font-bold border-b border-slate-200 pb-2">
+                            <i class="fa-solid fa-money-bill-trend-up"></i>
+                            <span>9. Dòng Doanh Thu (Revenue Streams)</span>
+                        </div>
+                        <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+                            <li><strong>Phí sấy gia công:</strong> Thu theo tấn thành phẩm (~350.000 - 450.000 VNĐ/tấn).</li>
+                            <li><strong>Cho thuê trọn gói mùa vụ (ESCO):</strong> Cho thuê trạm sấy theo tháng (~25 - 30 triệu VNĐ/tháng).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 4: PHÂN TÍCH CHUYÊN SÂU & TÀI CHÍNH ================= -->
+        <section id="tab-analysis" class="tab-content hidden space-y-8">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 space-y-8">
+                <div class="border-b border-slate-100 pb-4">
+                    <h3 class="text-2xl font-bold text-slate-900"><i class="fa-solid fa-chart-line text-emerald-600 mr-2"></i> Phân Tích Chuyên Sâu & Công Cụ Hoàn Vốn (ROI)</h3>
+                    <p class="text-slate-500 text-sm">Bám sát tiêu chí chấm thi Vòng Sơ khảo & Chung kết (Phụ lục V)</p>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="font-bold text-slate-900 text-base"><i class="fa-solid fa-table text-emerald-600 mr-2"></i> Bảng So Sánh Giải Pháp & Tính Mới Khác Biệt</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 font-bold text-xs uppercase tracking-wider">
+                                    <th class="p-3.5 rounded-l-xl">Tiêu Chí Đánh Giá</th>
+                                    <th class="p-3.5">Phơi Truyền Thống</th>
+                                    <th class="p-3.5">Lò Sấy Than/Điện Truyền Thống</th>
+                                    <th class="p-3.5 rounded-r-xl bg-emerald-50 text-emerald-900">Trạm Sấy Lai Tối Giản (Dự Án)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-xs sm:text-sm">
+                                <tr>
+                                    <td class="font-semibold text-slate-800 p-3.5">Khả năng ứng dụng nguyên liệu</td>
+                                    <td class="p-3.5 text-slate-600">Giới hạn, phụ thuộc thời tiết, dễ ẩm mốc</td>
+                                    <td class="p-3.5 text-slate-600">Phục vụ cơ bản nhưng tốn điện/than</td>
+                                    <td class="p-3.5 bg-emerald-50/50 font-bold text-emerald-700">Đa năng tuyệt đối: Ngũ cốc, hạt dầu, rau củ, trái cây nhờ linh hoạt dải nhiệt độ</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-slate-800 p-3.5">Chất lượng & Tiêu chuẩn ESG</td>
+                                    <td class="p-3.5 text-slate-600">Lẫn tạp chất, phụ thuộc nắng</td>
+                                    <td class="p-3.5 text-slate-600">Nguy cơ ám khói độc, cháy hạt</td>
+                                    <td class="p-3.5 bg-emerald-50/50 font-bold text-emerald-700">Trao đổi nhiệt gián tiếp ống chùm tách khói 100%, giữ nguyên cấu trúc hạt tự nhiên</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="font-bold text-slate-900 text-base"><i class="fa-solid fa-calculator text-emerald-600 mr-2"></i> Dự Toán Vật Tư Chế Tạo 01 Trạm Module 15-20 Feet</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3 text-xs sm:text-sm">
+                            <div class="flex justify-between border-b border-slate-200 pb-2">
+                                <span class="text-slate-600">Khung container cải hoán & cách nhiệt:</span>
+                                <span class="font-bold text-slate-900">35.000.000 VNĐ</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-200 pb-2">
+                                <span class="text-slate-600">Hệ mái thu nhiệt không khí & quạt ly tâm:</span>
+                                <span class="font-bold text-slate-900">40.000.000 VNĐ</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-200 pb-2">
+                                <span class="text-slate-600">Hệ PV 3kWp + Pin LiFePO4 gọn nhẹ:</span>
+                                <span class="font-bold text-slate-900">32.000.000 VNĐ</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-200 pb-2">
+                                <span class="text-slate-600">Lò sinh khối + Xyclon + Ống chùm Inox 304:</span>
+                                <span class="font-bold text-slate-900">55.000.000 VNĐ</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-200 pb-2">
+                                <span class="text-slate-600">Cảm biến IoT, tủ IP65 & mạch EMS:</span>
+                                <span class="font-bold text-slate-900">18.000.000 VNĐ</span>
+                            </div>
+                            <div class="flex justify-between pt-1 font-bold text-emerald-700 text-base">
+                                <span>Tổng CapEx Ước Tính:</span>
+                                <span>180.000.000 VNĐ</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-emerald-900 text-white p-6 rounded-2xl flex flex-col justify-between space-y-4">
+                            <div>
+                                <h5 class="font-bold text-emerald-300 text-sm mb-1"><i class="fa-solid fa-sliders mr-1"></i> Công Cụ Mô Phỏng Hoàn Vốn Tương Tác</h5>
+                                <p class="text-xs text-slate-300 mb-4">Kéo thanh trượt số tấn sấy trung bình mỗi tháng để tính thời gian hoàn vốn:</p>
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <div class="flex justify-between text-xs mb-1">
+                                            <span>Sản lượng sấy tháng:</span>
+                                            <span id="slider-val" class="font-bold text-emerald-300 text-sm">60 Tấn/tháng</span>
+                                        </div>
+                                        <input type="range" id="tonnage-slider" min="20" max="150" step="10" value="60" class="w-full accent-emerald-400 cursor-pointer" oninput="updateROI()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-emerald-950/80 p-4 rounded-xl border border-emerald-500/30 grid grid-cols-2 gap-4 text-center">
+                                <div>
+                                    <span class="text-xs text-slate-400 block">Doanh Thu Dự Kiến/Tháng</span>
+                                    <span id="roi-revenue" class="font-bold text-emerald-400 text-base">24.000.000 đ</span>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-slate-400 block">Thời Gian Hoàn Vốn</span>
+                                    <span id="roi-months" class="font-bold text-amber-400 text-base">10.5 Tháng</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-slate-100">
+                    <h4 class="font-bold text-slate-900 text-base"><i class="fa-solid fa-chart-area text-emerald-600 mr-2"></i> Biểu Đồ Dòng Tiền 3 Năm (Cash Flow Projection)</h4>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                        <div class="w-full h-72">
+                            <canvas id="cashflowChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 5: TÁC ĐỘNG & SỞ HỮU TRÍ TUỆ ================= -->
+        <section id="tab-impact" class="tab-content hidden space-y-8">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 space-y-8">
+                <div class="border-b border-slate-100 pb-4">
+                    <h3 class="text-2xl font-bold text-slate-900"><i class="fa-solid fa-earth-americas text-emerald-600 mr-2"></i> Tác Động Xã Hội & Sở Hữu Trí Tuệ</h3>
+                    <p class="text-slate-500 text-sm">Cam kết phát triển bền vững và tuân thủ quy định cuộc thi</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-coins"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900">Kinh Tế Nông Thôn</h4>
+                        <p class="text-slate-600 text-xs leading-relaxed">
+                            Nâng cao giá trị nông sản sau thu hoạch nhờ phương pháp sấy nhiệt đối lưu chuẩn xác, bảo quản hạt giống và nông sản không bị nấm mốc.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-seedling"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900">Môi Trường & Tái Tạo</h4>
+                        <p class="text-slate-600 text-xs leading-relaxed">
+                            Tận dụng phế phụ phẩm nông nghiệp (trấu, vỏ cà phê, lõi ngô) đốt sinh khối qua ống chùm gián tiếp, giảm phát thải khí nhà kính, đạt chuẩn ESG.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900">Sở Hữu Trí Tuệ</h4>
+                        <p class="text-slate-600 text-xs leading-relaxed">
+                            Thiết kế kiểu dáng công nghiệp module container lai và mã nguồn thuật toán EMS quản lý năng lượng thông minh thuộc quyền sở hữu sáng tạo của nhóm tác giả Trường THCS và THPT Đinh Thiện Lý.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-slate-100">
+                    <h4 class="font-bold text-slate-900 text-base"><i class="fa-solid fa-list-check text-emerald-600 mr-2"></i> Bảng Tự Đánh Giá Tiêu Chí Chấm Thi (Phụ Lục V - 100 Điểm)</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead>
+                                <tr class="bg-slate-900 text-white font-bold text-xs uppercase tracking-wider">
+                                    <th class="p-3.5 rounded-l-xl">Tiêu Chí Đánh Giá</th>
+                                    <th class="p-3.5">Trọng Số / Thang Điểm</th>
+                                    <th class="p-3.5 rounded-r-xl">Tự Đánh Giá Chi Tiết Dự Án</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-xs sm:text-sm">
+                                <tr>
+                                    <td class="font-semibold text-slate-800 p-3.5">1. Tính cấp thiết & Nhu cầu thị trường</td>
+                                    <td class="p-3.5 text-emerald-700 font-bold">15 Điểm</td>
+                                    <td class="p-3.5 text-slate-600">Giải quyết nhu cầu sấy nhiệt thiết yếu cho mọi nông sản sau thu hoạch, chống nấm mốc và tổn thất.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-slate-800 p-3.5">2. Tính mới, Sáng tạo & Giá trị khác biệt</td>
+                                    <td class="p-3.5 text-emerald-700 font-bold">25 Điểm</td>
+                                    <td class="p-3.5 text-slate-600">Kiến trúc năng lượng lai 3 tầng tối giản, ống chùm tách khói gián tiếp, thuật toán EMS thông minh.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-slate-800 p-3.5">3. Tính khả thi, Quy trình vận hành & Kỹ thuật</td>
+                                    <td class="p-3.5 text-emerald-700 font-bold">25 Điểm</td>
+                                    <td class="p-3.5 text-slate-600">Thiết kế chuẩn container 20ft dễ di chuyển, linh hoạt điều chỉnh dải nhiệt cho từng loại hạt/củ/quả.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-slate-800 p-3.5">4. Hiệu quả tài chính & Mô hình kinh doanh</td>
+                                    <td class="p-3.5 text-emerald-700 font-bold">20 Điểm</td>
+                                    <td class="p-3.5 text-slate-600">CapEx hợp lý (~180 trđ), hoàn vốn nhanh 10-14 tháng, đa dạng dòng doanh thu D-a-S và cho thuê mùa vụ.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-slate-800 p-3.5">5. Tác động Xã hội, Môi trường & Khả năng mở rộng</td>
+                                    <td class="p-3.5 text-emerald-700 font-bold">15 Điểm</td>
+                                    <td class="p-3.5 text-slate-600">Giảm phát thải CO2, tận dụng phế phụ phẩm, dễ dàng nhân rộng toàn quốc.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 border-t border-slate-800 mt-12 text-center text-xs sm:text-sm">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <p class="font-semibold text-slate-200">Dự án: Trạm Sấy Nông Sản Di Động Thông Minh Ứng Dụng Năng Lượng Lai Tối Giản (AgriSolar-Dryer)</p>
+            <p>Cuộc thi "Học sinh, sinh viên với ý tưởng khởi nghiệp" cấp Thành phố năm học 2026 - 2027 | Đơn vị: Trường THCS và THPT Đinh Thiện Lý</p>
+            <p class="text-slate-500 pt-2">© 2026 AgriTech Startup Team - All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Interactivity -->
+    <script>
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-emerald-400', 'bg-emerald-900/40', 'border', 'border-emerald-500/30');
+                btn.classList.add('text-slate-300', 'hover:text-white', 'hover:bg-slate-800');
+                if(btn.getAttribute('data-target') === tabId) {
+                    btn.classList.add('text-emerald-400', 'bg-emerald-900/40', 'border', 'border-emerald-500/30');
+                    btn.classList.remove('text-slate-300', 'hover:text-white', 'hover:bg-slate-800');
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        function toggleMobileMenu() {
+            mobileMenu.classList.add('hidden');
+        }
+
+        // Interactive Simulator Mode Switcher
+        function setMode(mode) {
+            document.querySelectorAll('.sim-mode-btn').forEach(btn => {
+                btn.classList.remove('bg-emerald-600', 'text-white', 'shadow-md');
+                btn.classList.add('bg-slate-100', 'text-slate-700');
+            });
+
+            const activeBtn = document.getElementById(`btn-${mode}`);
+            activeBtn.classList.remove('bg-slate-100', 'text-slate-700');
+            activeBtn.classList.add('bg-emerald-600', 'text-white', 'shadow-md');
+
+            const statusBadge = document.getElementById('sim-status-badge');
+            const layerSolar = document.getElementById('layer-solar');
+            const layerPv = document.getElementById('layer-pv');
+            const layerBiomass = document.getElementById('layer-biomass');
+            const biomassIcon = document.getElementById('biomass-icon');
+
+            if(mode === 'day') {
+                statusBadge.textContent = "Trạng Thái: Ban Ngày - Nắng Tốt (Tối ưu Nhiệt Mặt Trời)";
+                statusBadge.className = "px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold";
+                layerSolar.style.opacity = "1";
+                layerPv.style.opacity = "1";
+                layerBiomass.style.opacity = "0.6";
+                biomassIcon.className = "fa-solid fa-fire text-slate-400 text-2xl mb-1";
+            } else if(mode === 'cloud') {
+                statusBadge.textContent = "Trạng Thái: Giao Thời - Mây Mù (EMS Kích Hoạt Sớm)";
+                statusBadge.className = "px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/40 text-blue-300 text-xs font-bold";
+                layerSolar.style.opacity = "0.7";
+                layerPv.style.opacity = "0.8";
+                layerBiomass.style.opacity = "1";
+                biomassIcon.className = "fa-solid fa-fire text-amber-500 text-2xl mb-1 animate-pulse";
+            } else if(mode === 'night') {
+                statusBadge.textContent = "Trạng Thái: Ban Đêm / Mưa Bão (Sinh Khối 100%)";
+                statusBadge.className = "px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold";
+                layerSolar.style.opacity = "0.3";
+                layerPv.style.opacity = "0.5";
+                layerBiomass.style.opacity = "1";
+                biomassIcon.className = "fa-solid fa-fire text-amber-500 text-2xl mb-1";
+            }
+        }
+
+        // Update Crop Parameters in Simulator
+        function updateCropParameters() {
+            const crop = document.getElementById('crop-selector').value;
+            const tempEl = document.getElementById('crop-temp');
+            const humEl = document.getElementById('crop-humidity-target');
+            const noteEl = document.getElementById('crop-note');
+
+            if(crop === 'cereal') {
+                tempEl.textContent = "45°C - 55°C";
+                humEl.textContent = "12% - 14% (Chuẩn an toàn lúa/ngô)";
+                noteEl.textContent = "Chống nấm mốc, chống gãy hạt";
+            } else if(crop === 'nut') {
+                tempEl.textContent = "50°C - 65°C";
+                humEl.textContent = "3% - 5% (Hạt điều, mắc-ca, cà phê)";
+                noteEl.textContent = "Giữ dầu tự nhiên, giòn đều";
+            } else if(crop === 'spice') {
+                tempEl.textContent = "40°C - 50°C";
+                humEl.textContent = "8% - 10% (Ớt, tiêu, gừng, nghệ)";
+                noteEl.textContent = "Giữ trọn màu sắc và tinh dầu";
+            } else if(crop === 'fruit') {
+                tempEl.textContent = "55°C - 70°C";
+                humEl.textContent = "15% - 20% (Chuối, xoài, mít)";
+                noteEl.textContent = "Thoát ẩm đều, dẻo ngọt tự nhiên";
+            }
+        }
+
+        // Interactive ROI Calculator Logic
+        function updateROI() {
+            const tonnage = parseInt(document.getElementById('tonnage-slider').value);
+            document.getElementById('slider-val').textContent = tonnage + " Tấn/tháng";
+
+            const monthlyRev = tonnage * 400000;
+            document.getElementById('roi-revenue').textContent = monthlyRev.toLocaleString('vi-VN') + " đ";
+
+            const monthlyProfit = monthlyRev * 0.6;
+            const capex = 180000000;
+            const monthsToPayback = (capex / monthlyProfit).toFixed(1);
+            document.getElementById('roi-months').textContent = monthsToPayback + " Tháng";
+        }
+
+        // Chart.js Cash Flow Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('cashflowChart').getContext('2d');
+            const cashflowChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Tháng 3', 'Tháng 6', 'Tháng 9', 'Tháng 12 (Năm 1)', 'Năm 2', 'Năm 3'],
+                    datasets: [
+                        {
+                            label: 'Dòng Tiền Tích Lũy (VNĐ)',
+                            data: [-180, -90, 20, 140, 420, 850],
+                            backgroundColor: '#059669',
+                            borderRadius: 8,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + ' Triệu VNĐ';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' Trđ';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
